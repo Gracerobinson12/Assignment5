@@ -4,25 +4,18 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-    float forwardSpeed = 8f;
-    float sideSpeed = 6f;
+    [SerializeField] float forwardSpeed = 6f;
+    [SerializeField] float sideSpeed = 4f;
 
     Rigidbody rb;
-
     Vector2 moveInput;
-
     float currentSideInput;
     float sideVelocity;
-
     float originalForwardSpeed;
 
-    // Set by hazards like ConveyorHazard to push the player sideways
-    // while they are standing in the hazard zone.
     [HideInInspector] public float externalSidePush = 0f;
-
     bool controlsLocked = false;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -37,10 +30,7 @@ public class PlayerMovement : MonoBehaviour
     public void LockControls()
     {
         controlsLocked = true;
-        if (rb != null)
-        {
-            rb.linearVelocity = Vector3.zero;
-        }
+        if (rb != null) rb.linearVelocity = Vector3.zero;
     }
 
     private IEnumerator SpeedBoostRoutine(float boostSpeed, float duration)
@@ -57,18 +47,10 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (controlsLocked)
-        {
-            return;
-        }
+        if (controlsLocked) return;
 
-        currentSideInput = Mathf.SmoothDamp(
-            currentSideInput,
-            moveInput.x,
-            ref sideVelocity,
-            0.1f
-        );
-        
+        currentSideInput = Mathf.SmoothDamp(currentSideInput, moveInput.x, ref sideVelocity, 0.1f);
+
         Vector3 movement = new Vector3(
             currentSideInput * sideSpeed + externalSidePush,
             rb.linearVelocity.y,
@@ -78,9 +60,5 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = movement;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    void Update() { }
 }
